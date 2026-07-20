@@ -1,52 +1,52 @@
 """
-Simple Quiz Game
------------------
-Python च्या basics concepts वापरून बनवलेला छोटा project:
+Simple Quiz Game (English version)
+------------------------------------
+A small project using Python basics:
 - Variables
-- Lists आणि Dictionaries
+- Lists and Dictionaries
 - Loops (for)
 - Functions
 - if / else
-- थोडं Exception Handling (input validation साठी)
+- Basic Exception Handling (for input validation)
 """
 
 # ---------------------------------------------------------
-# STEP 1: Questions ची data — प्रत्येक question एक dictionary आहे
+# STEP 1: Question data — each question is a dictionary
 # ---------------------------------------------------------
 
 questions = [
     {
-        "question": "Python मध्ये list सुरू करायला कोणतं symbol वापरतात?",
+        "question": "Which symbol is used to start a list in Python?",
         "options": ["1. { }", "2. [ ]", "3. ( )", "4. < >"],
         "answer": "2"
     },
     {
-        "question": "10 % 3 चं उत्तर काय येईल?",
+        "question": "What is the result of 10 % 3?",
         "options": ["1. 3", "2. 0", "3. 1", "4. 10"],
         "answer": "3"
     },
     {
-        "question": "for loop चा उपयोग कशासाठी होतो?",
+        "question": "What is a for loop used for?",
         "options": [
-            "1. एकदाच code चालवण्यासाठी",
-            "2. condition check करण्यासाठी",
-            "3. ठराविक वेळा किंवा list वर iterate करण्यासाठी",
-            "4. function बनवण्यासाठी",
+            "1. Running code only once",
+            "2. Checking a condition",
+            "3. Repeating a set number of times or iterating over a list",
+            "4. Creating a function",
         ],
         "answer": "3"
     },
     {
-        "question": "'ValueError' कधी येते?",
+        "question": "When does a 'ValueError' occur?",
         "options": [
-            "1. file सापडली नाही तर",
-            "2. चुकीच्या प्रकारचा data convert करायचा प्रयत्न केला तर",
-            "3. list index बाहेर गेला तर",
-            "4. zero ने भाग दिला तर",
+            "1. When a file is not found",
+            "2. When converting data to the wrong type",
+            "3. When a list index is out of range",
+            "4. When dividing by zero",
         ],
         "answer": "2"
     },
     {
-        "question": "Dictionary मधून value कशी मिळवतात?",
+        "question": "How do you get a value from a dictionary?",
         "options": [
             "1. dictionary[index]",
             "2. dictionary.get(index)",
@@ -59,38 +59,37 @@ questions = [
 
 
 # ---------------------------------------------------------
-# STEP 2: एक question विचारायचं आणि उत्तर बरोबर आहे का ते
-# check करायचं function
+# STEP 2: Function to ask one question and check the answer
 # ---------------------------------------------------------
 
 def ask_question(q_number, q_data):
-    print(f"\nप्रश्न {q_number}: {q_data['question']}")
+    print(f"\nQuestion {q_number}: {q_data['question']}")
     for option in q_data["options"]:
         print("  " + option)
 
-    # ---- इथे थोडं Exception Handling ----
-    # User ने काहीही टाईप केलं तरी program crash होऊ नये.
+    # ---- Exception Handling here ----
+    # Program should not crash no matter what the user types.
     try:
-        user_answer = input("तुमचं उत्तर (1/2/3/4): ").strip()
+        user_answer = input("Your answer (1/2/3/4): ").strip()
 
         if user_answer not in ["1", "2", "3", "4"]:
-            raise ValueError("कृपया 1, 2, 3 किंवा 4 यापैकीच एक टाका.")
+            raise ValueError("Please enter only 1, 2, 3, or 4.")
 
     except ValueError as e:
-        print(f"चुकीचा input: {e}")
-        return False   # चुकीचा input दिला तर उत्तर चुकीचं मानू
+        print(f"Invalid input: {e}")
+        return False   # Treat invalid input as a wrong answer
 
-    # उत्तर बरोबर आहे का ते check करा
+    # Check if the answer is correct
     if user_answer == q_data["answer"]:
-        print("बरोबर! ✅")
+        print("Correct! ✅")
         return True
     else:
-        print(f"चुकीचं. बरोबर उत्तर होतं: {q_data['answer']}")
+        print(f"Wrong. The correct answer was: {q_data['answer']}")
         return False
 
 
 # ---------------------------------------------------------
-# STEP 3: संपूर्ण quiz चालवणारं function
+# STEP 3: Function that runs the whole quiz
 # ---------------------------------------------------------
 
 def run_quiz(questions):
@@ -98,7 +97,7 @@ def run_quiz(questions):
     total = len(questions)
 
     print("=" * 40)
-    print("   PYTHON QUIZ मध्ये स्वागत आहे!")
+    print("   WELCOME TO THE PYTHON QUIZ!")
     print("=" * 40)
 
     for i in range(total):
@@ -110,26 +109,26 @@ def run_quiz(questions):
 
 
 # ---------------------------------------------------------
-# STEP 4: शेवटी result दाखवणारं function
+# STEP 4: Function to show the final result
 # ---------------------------------------------------------
 
 def show_result(score, total):
     percentage = (score / total) * 100
 
     print("\n" + "=" * 40)
-    print(f"तुमचा Score: {score} / {total}  ({percentage:.1f}%)")
+    print(f"Your Score: {score} / {total}  ({percentage:.1f}%)")
 
     if percentage == 100:
-        print("Perfect! एकही चूक नाही! 🎉")
+        print("Perfect! No mistakes at all! 🎉")
     elif percentage >= 60:
-        print("छान! पण अजून थोडा सराव करा. 👍")
+        print("Good job! But keep practicing. 👍")
     else:
-        print("काळजी नको, परत प्रयत्न करा! 💪")
+        print("Don't worry, try again! 💪")
     print("=" * 40)
 
 
 # ---------------------------------------------------------
-# STEP 5: Program सुरू
+# STEP 5: Program starts here
 # ---------------------------------------------------------
 
 if __name__ == "__main__":
