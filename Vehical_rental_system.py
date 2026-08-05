@@ -36,8 +36,8 @@ def calculate_total_rent(vehicle, days):
 
 
 # Create objects
-my_car = Car("Toyota", price_per_day=50, seats=5)
-my_bike = Bike("Yamaha", price_per_day=20, helmet_included=True)
+my_car = Car("Toyota", price_per_day=1000, seats=5)
+my_bike = Bike("Yamaha", price_per_day=500, helmet_included=True)
 
 # Use inherited and customized methods
 print("--- AVAILABLE VEHICLES ---")
