@@ -7,3 +7,16 @@ class Student:
         total = sum(self.marks)
         percentage = total / len(self.marks)
         return percentage
+    def calculate_grade(self):
+        percentage = self.calculate_percentage()
+        
+        if percentage >= 90:
+            return "A+"
+        elif percentage >= 75:
+            return "A"
+        elif percentage >= 60:
+            return "B"
+        elif percentage >= 40:
+            return "C"
+        else:
+            return "Fail"
