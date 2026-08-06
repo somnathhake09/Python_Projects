@@ -32,9 +32,8 @@ class Student:
         print("-" * 30)
 
 
-# Objects banवून test karूया
-s1 = Student("Shivaji", 1, [90, 85, 95])
-s2 = Student("Sambhaji", 2, [60, 55, 70])
+s1 = Student("Somnath", 1, [90, 85, 95])
+s2 = Student("Dikshu", 2, [60, 55, 70])
 
 s1.display_info()
 s2.display_info()
