@@ -32,19 +32,6 @@ The goal of this repository is to improve my Python programming skills through h
 - Visual Studio Code
 - Git & GitHub
 
-## 📂 Repository Structure
-
-```
-Python_Projects/
-│── Basics/
-│── OOP/
-│── File_Handling/
-│── Exception_Handling/
-│── Data_Structures/
-│── Mini_Projects/
-│── Automation/
-└── README.md
-```
 
 ## 🚀 Future Updates
 
