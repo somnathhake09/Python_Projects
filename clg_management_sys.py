@@ -54,3 +54,33 @@ class TeachingAssistant(Student, Teacher):
     def assist(self):
         print(f"{self.name} is assisting in {self.subject} class while also studying.")
 
+
+# ===== HYBRID INHERITANCE =====
+# Combination of Hierarchical (Person -> Student, Teacher)
+# + Multiple (TeachingAssistant from Student & Teacher) = Hybrid structure
+# (already built above — TeachingAssistant is the hybrid part)
+
+
+def main():
+    print("=== College Management Demo ===\n")
+
+    s1 = Student("Somnath", 21, "S101")
+    print("--- Student ---")
+    s1.show_info()
+    s1.study()
+
+    t1 = Teacher("Mrs. Sharma", 40, "Python Programming")
+    print("\n--- Teacher ---")
+    t1.show_info()
+    t1.teach()
+
+    ta1 = TeachingAssistant("Rahul", 23, "S202", "Data Structures", 5000)
+    print("\n--- Teaching Assistant (Multiple + Hybrid) ---")
+    ta1.show_info()
+    ta1.study()
+    ta1.teach()
+    ta1.assist()
+
+
+if __name__ == "__main__":
+    main()
