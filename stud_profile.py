@@ -10,6 +10,8 @@ course = input("Enter Your Course Name :-")
 city = input("Enter Your City Name :-")
 percentage = float(input("Enter Your Percentage :-"))
 
+
+
 print("********** Student Profile **********")
 
 print("Name:", name)
