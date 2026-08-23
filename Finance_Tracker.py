@@ -23,7 +23,7 @@ while True:
     else:
         spend_type = "Unknown"
 
-    transactions.append(descriptiopn,amount,category,spend_type)
+    transactions.append((descriptiopn,amount,category,spend_type))
     print(f"Added : {descriptiopn} - {amount:.2f} ({spend_type})")
 
 
