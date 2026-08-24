@@ -38,10 +38,10 @@ print("=" * 40)
 
 total_spent = 0
 for t in transactions:
-    print(f"{desc:<15} {amt:>10.2f} [{cat} - {spend_type}]")
-    total_spent += amt 
+    print(f"{t['description']:<15} {t['amount']:>10.2f} [{t['category']} - {t['spend_type']}]")
+    total_spent += t['amount']
 
-remaining_balance =income - total_spent
+remaining_balance = income - total_spent
 spent_percentage = (total_spent / income) * 100 if income > 0 else 0
 
 print("\n" + "=" *( 40))
@@ -59,3 +59,26 @@ elif spent_percentage > 80 :
     print("\n ⚠️ You're Close to your income limit -- be careful. ")
 else:
     print("\n ✅ You're within a healthy spending range. ")
+
+
+# ---- NEW: category breakdown using a dictionary as a running total ----
+print("\n" + "=" * 40)
+print("Spending By Category")
+print("=" * 40)
+
+category_Totals = {}
+
+for t in transactions:
+    cat = t['category']
+    amt = t['amount']
+    if cat in category_Totals:
+        category_Totals[cat] += amt
+    else:
+        category_Totals[cat] = amt
+
+for cat,total in category_Totals.iteams():
+    print(f"{cat:<15} : {total:.2f}")
+
+# ---- NEW: unique categories using a set ----
+uni_categories = set(t["category"] for t in transactions)
+print(f"\n You spent across {len(uni_categories)} unique categories :{uni_categories}.")
