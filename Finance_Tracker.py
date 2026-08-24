@@ -2,17 +2,15 @@ print("=" * 40)
 print("Personal Finance Tracker")
 print("=" * 40)
 
-income_str = input("Enter Your Monthly Income:")
-income = float(income_str)
+income = float(input("Enter Your Monthly Income: "))
 transactions =[]
 
 while True:
-    descriptiopn = input("\nEnter Expense Description (or 'done' to Finish): ")
-    if descriptiopn.strip().lower() == "done":
+    description = input("\nEnter Expense Description (or 'done' to Finish): ")
+    if description.strip().lower() == "done":
         break
 
-    amount_str = input("Enter Amount:")
-    amount =float(amount_str)
+    amount = float(input("Enter Amount: "))
 
     category = input("Enter category (Food/Rent/Travel/Other): ")
 
@@ -23,17 +21,23 @@ while True:
     else:
         spend_type = "Unknown"
 
-    transactions.append((descriptiopn,amount,category,spend_type))
-    print(f"Added : {descriptiopn} - {amount:.2f} ({spend_type})")
+    transaction = {
+        "description" : description.strip(),
+        "amount": amount,
+        "category" : category,
+        "spend_type" : spend_type,
+    }
 
+    transactions.append(transaction)
+    print(f"Added : {transaction['description']} - {transaction['amount']:.2f}]"f"({transaction['spend_type']})")
 
+# summary of transactions    
 print("\n" + "=" * 40)
 print("All Transactions")
 print("=" * 40)
 
 total_spent = 0
 for t in transactions:
-    desc, amt, cat, spend_type = t
     print(f"{desc:<15} {amt:>10.2f} [{cat} - {spend_type}]")
     total_spent += amt 
 
