@@ -82,3 +82,13 @@ for cat,total in category_Totals.iteams():
 # ---- NEW: unique categories using a set ----
 uni_categories = set(t["category"] for t in transactions)
 print(f"\n You spent across {len(uni_categories)} unique categories :{uni_categories}.")
+
+highest_category = None
+highest_amount = 0
+
+for cat,total in category_Totals.items():
+    if total > highest_amount:
+        highest_amount = total
+        highest_category = cat
+
+print(f"\n Highest spending category: {highest_category} ({highest_amount:.2f})")
