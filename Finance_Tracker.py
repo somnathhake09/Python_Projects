@@ -1,9 +1,34 @@
 
+import json
+from pathlib import Path
+
+DATA_FILE = Path("transactions.json")
+
+
+def load_transactions(filename=DATA_FILE):
+    if not filename.exists():
+        return []
+
+    try:
+        with open(filename, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        # file exists but has invalid/empty JSON — start fresh instead of crashing
+        print("Warning: data file was empty or corrupted. Starting fresh.")
+        return []
+
+
+def save_transactions(transactions, filename=DATA_FILE):
+    """Saves the full transaction list to a JSON file, human-readable formatting."""
+    with open(filename, "w") as f:
+        json.dump(transactions, f, indent=2)
+
+
 def get_transaction():
     description = input("\nEnter expense description (or 'done' to finish): ").strip()
     if description.lower() == "done":
         return None
-    
+
     amount = float(input("Enter amount: "))
     category = input("Enter category (Food/Rent/Travel/Other): ").strip().title()
     spend_type = classify_expense(category)
@@ -28,7 +53,6 @@ def classify_expense(category, essential_list=("Food", "Rent")):
 def calculate_totals(transactions):
     total_spent = 0
     category_totals = {}
-
     for t in transactions:
         total_spent += t["amount"]
         cat = t["category"]
@@ -55,10 +79,11 @@ def calculate_percentage_spent(income, total_spent):
 
 def print_transaction_list(transactions):
     print("\n" + "=" * 40)
-    print("ALL TRANSACTIONS")
+    print("ALL TRANSACTIONS (including previously saved)")
     print("=" * 40)
     for t in transactions:
         print(f"{t['description']:<15} {t['amount']:>10.2f}  [{t['category']} - {t['spend_type']}]")
+
 
 def print_summary(income, total_spent, remaining, percent_spent):
     print("\n" + "=" * 40)
@@ -93,27 +118,37 @@ def print_category_breakdown(category_totals, highest_category, highest_amount):
 
 def main():
     print("=" * 40)
-    print("PERSONAL FINANCE TRACKER - v3")
+    print("PERSONAL FINANCE TRACKER - v4")
     print("=" * 40)
+
+    # ---- NEW: load existing transactions from disk first ----
+    # ---- नवीन: आधी डिस्कवरून जुने transactions लोड करा ----
+    transactions = load_transactions()
+    if transactions:
+        print(f"Loaded {len(transactions)} previously saved transaction(s).")
+    else:
+        print("No previous data found — starting fresh.")
 
     income = float(input("Enter your monthly income: "))
 
-    transactions = []
     while True:
         transaction = get_transaction()
-        if transaction is None:   
+        if transaction is None:
             break
         transactions.append(transaction)
         print(f"Added: {transaction['description']} - {transaction['amount']:.2f} "
-            f"({transaction['spend_type']})")
+              f"({transaction['spend_type']})")
 
-    # ---- Calculations (no printing here — just return values) ----
+    # ---- NEW: save everything back to disk before showing summary ----
+    # ---- नवीन: सारांश दाखवण्याआधी सगळं डिस्कवर परत सेव्ह करा ----
+    save_transactions(transactions)
+    print(f"\n💾 Saved {len(transactions)} total transaction(s) to {DATA_FILE}")
+
     total_spent, category_totals = calculate_totals(transactions)
     remaining = calculate_remaining(income, total_spent)
     percent_spent = calculate_percentage_spent(income, total_spent)
     highest_category, highest_amount = find_highest_category(category_totals)
 
-    # ---- Display (all printing happens here) ----
     print_transaction_list(transactions)
     print_summary(income, total_spent, remaining, percent_spent)
     print_category_breakdown(category_totals, highest_category, highest_amount)
