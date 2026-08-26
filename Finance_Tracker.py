@@ -19,7 +19,6 @@ def load_transactions(filename=DATA_FILE):
 
 
 def save_transactions(transactions, filename=DATA_FILE):
-    """Saves the full transaction list to a JSON file, human-readable formatting."""
     with open(filename, "w") as f:
         json.dump(transactions, f, indent=2)
 
@@ -120,9 +119,6 @@ def main():
     print("=" * 40)
     print("PERSONAL FINANCE TRACKER - v4")
     print("=" * 40)
-
-    # ---- NEW: load existing transactions from disk first ----
-    # ---- नवीन: आधी डिस्कवरून जुने transactions लोड करा ----
     transactions = load_transactions()
     if transactions:
         print(f"Loaded {len(transactions)} previously saved transaction(s).")
@@ -130,17 +126,14 @@ def main():
         print("No previous data found — starting fresh.")
 
     income = float(input("Enter your monthly income: "))
-
+    
     while True:
         transaction = get_transaction()
         if transaction is None:
             break
         transactions.append(transaction)
         print(f"Added: {transaction['description']} - {transaction['amount']:.2f} "
-              f"({transaction['spend_type']})")
-
-    # ---- NEW: save everything back to disk before showing summary ----
-    # ---- नवीन: सारांश दाखवण्याआधी सगळं डिस्कवर परत सेव्ह करा ----
+            f"({transaction['spend_type']})")
     save_transactions(transactions)
     print(f"\n💾 Saved {len(transactions)} total transaction(s) to {DATA_FILE}")
 
@@ -152,7 +145,6 @@ def main():
     print_transaction_list(transactions)
     print_summary(income, total_spent, remaining, percent_spent)
     print_category_breakdown(category_totals, highest_category, highest_amount)
-
 
 if __name__ == "__main__":
     main()
