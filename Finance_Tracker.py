@@ -43,7 +43,7 @@ def get_transaction():
     category = input("Enter category (Food/Rent/Travel/Other): ").strip().title()
     if category == "":
         category = "Other"
-        spend_type = classify_expense(category)
+    spend_type = classify_expense(category)
 
     return {
         "description": description,
