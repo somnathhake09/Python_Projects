@@ -4,7 +4,6 @@ from pathlib import Path
 
 DATA_FILE = Path("transactions.json")
 
-
 def load_transactions(filename=DATA_FILE):
     if not filename.exists():
         return []
@@ -24,13 +23,27 @@ def save_transactions(transactions, filename=DATA_FILE):
 
 
 def get_transaction():
-    description = input("\nEnter expense description (or 'done' to finish): ").strip()
-    if description.lower() == "done":
-        return None
+    while True:
+        description = input("\nEnter transaction description (or 'done' to finish): ").strip()
+        if description.lower() == "done":
+            return None
+        if description == "":
+            print("Description cannot be empty. Please try again.")
+            continue
+        break
 
-    amount = float(input("Enter amount: "))
+    while True:
+        amount_input = input("Enter amount: ")
+        try:
+            amount = float(amount_input)
+            break
+        except ValueError:
+            print("Invalid amount. Please enter a numeric value.")
+
     category = input("Enter category (Food/Rent/Travel/Other): ").strip().title()
-    spend_type = classify_expense(category)
+    if category == "":
+        category = "Other"
+        spend_type = classify_expense(category)
 
     return {
         "description": description,
@@ -38,7 +51,6 @@ def get_transaction():
         "category": category,
         "spend_type": spend_type,
     }
-
 
 def classify_expense(category, essential_list=("Food", "Rent")):
     if category in essential_list:
@@ -126,7 +138,7 @@ def main():
         print("No previous data found — starting fresh.")
 
     income = float(input("Enter your monthly income: "))
-    
+
     while True:
         transaction = get_transaction()
         if transaction is None:
