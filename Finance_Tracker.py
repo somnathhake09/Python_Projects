@@ -4,159 +4,166 @@ from pathlib import Path
 
 DATA_FILE = Path("transactions.json")
 
-def load_transactions(filename=DATA_FILE):
-    if not filename.exists():
-        return []
+class Transaction:
+    """Represents a single financial transaction."""
 
-    try:
-        with open(filename, "r") as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        # file exists but has invalid/empty JSON — start fresh instead of crashing
-        print("Warning: data file was empty or corrupted. Starting fresh.")
-        return []
+    count = 0
 
+    def __init__(self, description, amount, category):
+        self.description = description
+        self.amount = amount
+        self.category = category
+        self.spend_type = self.classify()
+        Transaction.count += 1
 
-def save_transactions(transactions, filename=DATA_FILE):
-    with open(filename, "w") as f:
-        json.dump(transactions, f, indent=2)
+    def classify(self):
+        """Returns Essential, Discretionary, or Unknown based on the category."""
+        if self.category in ("Food", "Rent"):
+            return "Essential"
+        elif self.category in ("Travel", "Entertainment"):
+            return "Discretionary"
+        else:
+            return "Unknown"
 
+    def to_dict(self):
+        """Converts this object into a plain text dict - needed for JSON serialization."""
+        return {
+            "description": self.description,
+            "amount": self.amount,
+            "category": self.category,
+            "spend_type": self.spend_type,
+        }
 
-def get_transaction():
-    while True:
-        description = input("\nEnter transaction description (or 'done' to finish): ").strip()
-        if description.lower() == "done":
-            return None
-        if description == "":
-            print("Description cannot be empty. Please try again.")
-            continue
-        break
+    @classmethod
+    def from_dict(cls, data):
+        """Creates a Transaction object from a dict."""
+        return cls(data["description"], data["amount"], data["category"])
 
-    while True:
-        amount_input = input("Enter amount: ")
+    def __str__(self):
+        return f"{self.description:<15} {self.amount:>10.2f}  [{self.category} - {self.spend_type}]"
+
+class FinanceTracker:
+    """Manages the Full collection of transactions: loading, saving, and calculating summaries."""
+
+    def __init__(self,income,filename=DATA_FILE):
+        self.income =income
+        self.filename = filename
+        self.transactions = self.load_transactions()
+
+    def load_transactions(self):
+        if not self.filename.exists():
+            return []
         try:
-            amount = float(amount_input)
+            with open(self.filename, "r") as f:
+                data = json.load(f)
+                return [Transaction.from_dict(t) for t in data]
+        except json.JSONDecodeError:
+        # file exists but has invalid/empty JSON — start fresh instead of crashing
+            print("Warning: data file was empty or corrupted. Starting fresh.")
+            return []
+
+    def save_transactions(self):
+        with open(self.filename, "w") as f:
+            data = [t.to_dict() for t in self.transactions]
+            json.dump(data, f, indent=2)
+
+    def add_transaction_interactive(self):
+        while True:
+            description = input("\nEnter transaction description (or 'done' to finish): ").strip()
+            if description.lower() == "done":
+                return None
+            if description == "":
+                print("Description cannot be empty. Please try again.")
+                continue
             break
-        except ValueError:
-            print("Invalid amount. Please enter a numeric value.")
 
-    category = input("Enter category (Food/Rent/Travel/Other): ").strip().title()
-    if category == "":
-        category = "Other"
-    spend_type = classify_expense(category)
-
-    return {
-        "description": description,
-        "amount": amount,
-        "category": category,
-        "spend_type": spend_type,
-    }
-
-def classify_expense(category, essential_list=("Food", "Rent")):
-    if category in essential_list:
-        return "Essential"
-    elif category in ("Travel", "Entertainment"):
-        return "Discretionary"
-    else:
-        return "Unknown"
-
-
-def calculate_totals(transactions):
-    total_spent = 0
-    category_totals = {}
-    for t in transactions:
-        total_spent += t["amount"]
-        cat = t["category"]
-        category_totals[cat] = category_totals.get(cat, 0) + t["amount"]
-    return total_spent, category_totals
-
-
-def find_highest_category(category_totals):
-    if not category_totals:
-        return None, 0
-    highest_category = max(category_totals, key=category_totals.get)
-    return highest_category, category_totals[highest_category]
-
-
-def calculate_remaining(income, total_spent):
-    return income - total_spent
-
-
-def calculate_percentage_spent(income, total_spent):
-    if income == 0:
-        return 0
-    return (total_spent / income) * 100
-
-
-def print_transaction_list(transactions):
-    print("\n" + "=" * 40)
-    print("ALL TRANSACTIONS (including previously saved)")
-    print("=" * 40)
-    for t in transactions:
-        print(f"{t['description']:<15} {t['amount']:>10.2f}  [{t['category']} - {t['spend_type']}]")
-
-
-def print_summary(income, total_spent, remaining, percent_spent):
-    print("\n" + "=" * 40)
-    print("MONTHLY SUMMARY")
-    print("=" * 40)
-    print(f"Total spent         : {total_spent:.2f}")
-    print(f"Monthly income      : {income:.2f}")
-    print(f"% of income spent   : {percent_spent:.2f}%")
-    print(f"Remaining balance   : {remaining:.2f}")
-
-    if total_spent > income:
-        print("\n⚠️  You are OVERSPENDING this month!")
-    elif percent_spent > 80:
-        print("\n⚠️  You're close to your income limit — be careful.")
-    else:
-        print("\n✅ You're within a healthy spending range.")
-
-
-def print_category_breakdown(category_totals, highest_category, highest_amount):
-    print("\n" + "=" * 40)
-    print("SPENDING BY CATEGORY")
-    print("=" * 40)
-    for cat, total in category_totals.items():
-        print(f"{cat:<15}: {total:.2f}")
-
-    if highest_category:
-        print(f"\nHighest spending category: {highest_category} ({highest_amount:.2f})")
-
-    unique_categories = set(category_totals.keys())
-    print(f"You spent across {len(unique_categories)} unique categories: {unique_categories}")
-
-
-def main():
-    print("=" * 40)
-    print("PERSONAL FINANCE TRACKER - v4")
-    print("=" * 40)
-    transactions = load_transactions()
-    if transactions:
-        print(f"Loaded {len(transactions)} previously saved transaction(s).")
-    else:
-        print("No previous data found — starting fresh.")
-
-    income = float(input("Enter your monthly income: "))
-
-    while True:
-        transaction = get_transaction()
-        if transaction is None:
+        while True:
+            description = input("\nEnter transaction description (or 'done' to finish): ").strip()
+            if description.lower() == "done":
+                return False
+            if description == "":
+                print("Description cannot be empty. Please try again.")
+                continue
             break
-        transactions.append(transaction)
-        print(f"Added: {transaction['description']} - {transaction['amount']:.2f} "
-            f"({transaction['spend_type']})")
-    save_transactions(transactions)
-    print(f"\n💾 Saved {len(transactions)} total transaction(s) to {DATA_FILE}")
 
-    total_spent, category_totals = calculate_totals(transactions)
-    remaining = calculate_remaining(income, total_spent)
-    percent_spent = calculate_percentage_spent(income, total_spent)
-    highest_category, highest_amount = find_highest_category(category_totals)
+        while True:
+            amount_input = input("Enter amount: ")
+            try:
+                amount = float(amount_input)
+                break
+            except ValueError:
+                print("Invalid amount. Please enter a numeric value.")
 
-    print_transaction_list(transactions)
-    print_summary(income, total_spent, remaining, percent_spent)
-    print_category_breakdown(category_totals, highest_category, highest_amount)
+        category = input("Enter category (Food/Rent/Travel/Other): ").strip().title()
+        if category == "":
+            category = "Other"
 
-if __name__ == "__main__":
-    main()
+        transaction = Transaction(description, amount, category)
+        self.transactions.append(transaction)
+        print(f"Added: {transaction}")
+        return True
+
+    def calculate_totals(self):
+        total_spent = 0
+        category_totals = {}
+        for t in self.transactions:
+            total_spent += t.amount
+            category_totals[t.category] = category_totals.get(t.category, 0) + t.amount
+        return total_spent, category_totals
+
+    def find_highest_category(self,category_totals):
+        if not category_totals:
+            return None, 0
+        highest_category = max(category_totals, key=category_totals.get)
+        return highest_category, category_totals[highest_category]
+
+    def calculate_remaining(self, total_spent):
+        return self.income - total_spent
+
+    def calculate_percentage_spent(self, total_spent):
+        if self.income == 0:
+            return 0
+        return (total_spent / self.income) * 100
+
+    def print_transaction_list(self):
+        print("\n" + "=" * 40)
+        print("ALL TRANSACTIONS (including previously saved)")
+        print("=" * 40)
+        for t in self.transactions:
+            print(t)
+
+    def print_summary(self):
+        total_spent, category_totals = self.calculate_totals()        
+        remaining = self.calculate_remaining(total_spent)
+        percentage_spent = self.calculate_percentage_spent(total_spent)
+
+        print("\n" + "=" * 40)
+        print(" MONTHLY SUMMARY")
+        print("=" * 40)
+        print(f"Total Spent: ${total_spent:.2f}")
+        print(f"Total Income: ${self.income:.2f}")
+        print(f"Percentage of Income Spent: {percentage_spent:.2f}%")
+        print(f"Remaining Balance: ${remaining:.2f}")
+
+        if total_spent > self.income:
+            print("\n⚠️  You are OVERSPENDING this month!")
+        elif percentage_spent > 90:
+            print("\n⚠️  You have spent more than 90% of your income!")
+        else:
+            print("\n✅ You are within your budget.")
+
+    def print_category_breakdown(self):
+        total_spent, category_totals = self.calculate_totals()
+        highest_category, highest_amount = self.find_highest_category(category_totals)
+        
+        print("\n" + "=" * 40)
+        print(" SPENDING BY CATEGORY")
+        print("=" * 40)
+        for cat,total in category_totals.items():
+            print(f"{cat:<15}: ${total:.2f}")
+        if highest_category:
+            print(f"\nHighest Spending Category: {highest_category} (${highest_amount:.2f})")
+
+        unique_categories = set(category_totals.keys())
+        print(f"You spent across {len(unique_categories)} unique categories this month.")  
+        
