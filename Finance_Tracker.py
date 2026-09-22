@@ -171,17 +171,17 @@ def main ():
         else:
             print("No previous data found -- starting fresh")
 
-            while tracker.add_transaction_interactive():
+        while tracker.add_transaction_interactive():
                 pass
 
-            tracker.save_transactions()
-            print(f"\n💾 Saved {len(tracker.transactions)} total transaction(s) to {tracker.filename}")
+        tracker.save_transactions()
+        print(f"\n💾 Saved {len(tracker.transactions)} total transaction(s) to {tracker.filename}")
 
-            tracker.print_transaction_list()
-            tracker.print_summary()
-            tracker.print_category_breakdown()
+        tracker.print_transaction_list()
+        tracker.print_summary()
+        tracker.print_category_breakdown()
 
-            print(f"\n(Total Transaction objects created this run: {Transaction.count})")
+        print(f"\n(Total Transaction objects created this run: {Transaction.count})")
 
 if __name__ == "__main__":
     main()
