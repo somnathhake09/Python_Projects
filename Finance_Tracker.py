@@ -168,7 +168,7 @@ class FinanceTracker:
         print(f"You spent across {len(unique_categories)} unique categories this month.")  
 
 
-    def main ():
+def main ():
         print("="* 40)
         print("PERSONAL FINANCE TRACKER - V5 (OOP)")
         print("+"* 40)
@@ -192,5 +192,5 @@ class FinanceTracker:
 
             print(f"\n(Total Transaction objects created this run: {Transaction.count})")
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
