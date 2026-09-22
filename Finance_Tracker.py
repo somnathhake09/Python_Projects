@@ -166,4 +166,31 @@ class FinanceTracker:
 
         unique_categories = set(category_totals.keys())
         print(f"You spent across {len(unique_categories)} unique categories this month.")  
-        
+
+
+    def main ():
+        print("="* 40)
+        print("PERSONAL FINANCE TRACKER - V5 (OOP)")
+        print("+"* 40)
+
+        income = float(input("Enter your monthly income: "))
+        tracker = FinanceTracker(income)
+        if tracker.transactions:
+            print(f"\nLoaded {len(tracker.transactions)} transactions from previous sessions.")
+        else:
+            print("No previous data found -- starting fresh")
+
+            while tracker.add_transaction_interactive():
+                pass
+
+            tracker.save_transactions()
+            print(f"\n💾 Saved {len(tracker.transactions)} total transaction(s) to {tracker.filename}")
+
+            tracker.print_transaction_list()
+            tracker.print_summary()
+            tracker.print_category_breakdown()
+
+            print(f"\n(Total Transaction objects created this run: {Transaction.count})")
+
+    if __name__ == "__main__":
+        main()
