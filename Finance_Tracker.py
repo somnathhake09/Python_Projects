@@ -71,15 +71,6 @@ class FinanceTracker:
         while True:
             description = input("\nEnter transaction description (or 'done' to finish): ").strip()
             if description.lower() == "done":
-                return None
-            if description == "":
-                print("Description cannot be empty. Please try again.")
-                continue
-            break
-
-        while True:
-            description = input("\nEnter transaction description (or 'done' to finish): ").strip()
-            if description.lower() == "done":
                 return False
             if description == "":
                 print("Description cannot be empty. Please try again.")
